@@ -38,6 +38,7 @@ public class SecurityConfig {
 		
 		.authorizeHttpRequests(auth->auth
 				.requestMatchers("/Auth/**").permitAll()
+				.requestMatchers("/arul/Users/save").permitAll()			   
 				.requestMatchers("/arul/Users/UpdateUser").hasAnyRole("ADMIN","MANAGER")
 				.requestMatchers("/arul/Users/DeleteUser").hasRole("ADMIN")
 				.requestMatchers("/arul/Users/GetAll").hasAnyRole("ADMIN","TEAM_LEAD","MANAGER")
