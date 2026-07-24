@@ -412,37 +412,3 @@ automatically on variable changes.
   but auto-alters your schema on every startup; fine here, worth knowing
   before scaling this up.
 
-## What was fixed in this pass
-
-The `frontend/` folder, `Dockerfile`, and `docker-compose.yml` already
-existed in the uploaded project, wired to call a specific set of backend
-endpoints. Tracing that wiring against the actual controllers turned up a
-few gaps that would have broken a real deployment; all are now fixed in
-this codebase:
-
-- **No way to create the first user at all.** `/arul/Users/Save` requires
-  authentication, but nothing could authenticate yet on an empty database.
-  Added `DataSeeder` to seed one admin account on first boot.
-- **Missing `/arul/Users/Me` endpoint.** The frontend already called it
-  (for session restore and role-based UI) but it didn't exist on the
-  backend. Added it.
-- **No CORS configuration anywhere**, despite `docker-compose.yml` already
-  defining a `CORS_ALLOWED_ORIGINS` variable for it. Without this, a
-  frontend on a different origin than the backend (i.e. any real
-  deployment) would get every request blocked by the browser. Added a
-  proper CORS configuration wired to that variable.
-- **`@PreAuthorize` annotations were silently ignored** — Spring Security 6
-  requires `@EnableMethodSecurity` for them to take effect, and it was
-  missing. This meant any authenticated user, regardless of role, could
-  start/resolve/close complaints or trigger escalation. Now enforced.
-- **Two role-matching bugs from case-sensitive path matching**:
-  `/arul/Users/GetAll` (config) vs. the actual `/arul/Users/Getall`
-  (controller), and a `TEAMM_LEAD` typo instead of `TEAM_LEAD`. Both meant
-  the intended role restriction silently never applied. Fixed.
-- **Database URL, JWT secret, and mail credentials were hardcoded** in
-  `application.properties` instead of reading the environment variables
-  `docker-compose.yml` already declared for them. Now all wired through, so
-  the same image can be deployed anywhere just by changing env vars.
-- **Server port was hardcoded to 8080**, which breaks on hosts (Render,
-  Railway) that inject a `PORT` env var and require the app to bind to it.
-  Now reads `${PORT:8080}`.
