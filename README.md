@@ -26,7 +26,7 @@ high-priority complaints auto-escalate, and admins manage the user roster.
 - [Deploying to production (3-tier)](#deploying-to-production-3-tier)
 - [Alternative: everything on Railway](#alternative-everything-on-railway)
 - [Security notes before you deploy](#security-notes-before-you-deploy)
-- [What was fixed in this pass](#what-was-fixed-in-this-pass)
+
 
 ## Architecture
 
